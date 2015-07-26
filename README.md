@@ -95,3 +95,24 @@ You can modify the base URL used for the Raven authentication flow by editing yo
     <add key="RavenBaseURL" value="https://demo.raven.cam.ac.uk/auth/" />
 </appSettings>
 ```
+
+If you wish to automatically redirect the user if authentication has failed, you can add the following entry to `Web.config` with the URL of the error page:
+
+```xml
+<appSettings>
+    <add key="RavenError" value="~/Error/Raven/" />
+</appSettings>
+```
+
+`Authorize` will automatically redirect the user if authentication fails, including the status code in the URL. For example, if the user cancels authentication, they will be redirected to `~/Error/Raven/410`. `ErrorController` can then turn this number back into a `RavenStatus` value to e.g. display it in a view:
+
+```C#
+public ActionResult Raven(RavenStatus id)
+{
+    return View(id);
+}
+```
+
+If no value for `RavenError` is specified in `Web.config`, an exception will be thrown.
+
+

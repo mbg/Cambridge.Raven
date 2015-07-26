@@ -52,6 +52,10 @@ namespace Cambridge.Raven
         /// </summary>
         private String certificatePath = CERTIFICATE_PATH;
         /// <summary>
+        /// The path to which a user should be redirected if something has gone wrong.
+        /// </summary>
+        private String errorURL = null;
+        /// <summary>
         /// The certificate store (this used to be a X509Store).
         /// </summary>
         private Dictionary<String, X509Certificate2> certificates;
@@ -103,6 +107,12 @@ namespace Cambridge.Raven
 
             if (!String.IsNullOrWhiteSpace(certificatePath))
                 this.certificatePath = certificatePath;
+
+            // try to load the error URL from the Web.config
+            String errorURL = WebConfigurationManager.AppSettings["RavenError"];
+
+            if (!String.IsNullOrWhiteSpace(errorURL))
+                this.errorURL = errorURL;
 
             // load certificates
             this.LoadCertificate();
@@ -241,14 +251,33 @@ namespace Cambridge.Raven
                     // parse the response data
                     RavenResponse ravenResponse = new RavenResponse(wlsResponse);
 
-                    if (!this.Validate(ravenResponse))
-                        throw new RavenException("Failed to validate response signature.");
+                    // if the server has indicated that authentication was successful,
+                    // validate the response signature and set an authentication cookie
+                    if (ravenResponse.Status == RavenStatus.OK)
+                    {
+                        if (!this.Validate(ravenResponse))
+                            throw new RavenException("Failed to validate response signature.");
 
-                    // create a Forms authentication ticket and cookie
-                    this.CreateTicket(response, ravenResponse);
+                        // create a Forms authentication ticket and cookie
+                        this.CreateTicket(response, ravenResponse);
 
-                    // redirect the user back to where they started
-                    response.Redirect(ravenResponse.URL);
+                        // redirect the user back to where they started
+                        response.Redirect(ravenResponse.URL);
+                    }
+                    else
+                    {
+                        // check to see if there is a URL we should redirect the user to
+                        // if not: throw an exception
+                        if (String.IsNullOrWhiteSpace(this.errorURL))
+                        {
+                            throw new RavenResponseException(
+                                "Authentication failed: " + ravenResponse.Status.ToString(), 
+                                ravenResponse.Status);
+                        }
+
+                        response.Redirect(this.errorURL + (Int32)ravenResponse.Status);
+                    }
+
                     return;
                 }
             }

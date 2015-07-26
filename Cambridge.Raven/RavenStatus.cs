@@ -12,6 +12,10 @@ namespace Cambridge.Raven
     public enum RavenStatus
     {
         /// <summary>
+        /// Default value in case no status is available.
+        /// </summary>
+        Unknown = 0,
+        /// <summary>
         /// The user successfully identified him/her self and their
         /// identity is present in the response. All responses with
         /// status code 200 are signed.

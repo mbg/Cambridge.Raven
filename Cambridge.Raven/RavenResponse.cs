@@ -68,7 +68,7 @@ namespace Cambridge.Raven
             }
         }
         /// <summary>
-        /// Gets the protocol version indicated by the response. This is always WLS3.
+        /// Gets the protocol version indicated by the response. 
         /// </summary>
         public RavenVersion Version
         {
@@ -223,8 +223,10 @@ namespace Cambridge.Raven
             if (!Int32.TryParse(parts[0], out ver))
                 throw new RavenResponseException("could not identify protocol version");
 
-            if (ver != 3)
+            if (ver > 3)
                 throw new RavenException("Unsupported protcol version.");
+
+            this.version = (RavenVersion)ver;
 
             // try to parse the status code 
             Int32 statusCode = 0;
