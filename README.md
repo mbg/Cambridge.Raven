@@ -84,7 +84,7 @@ protected override void OnAuthorization(AuthorizationContext filterContext)
 }
 ```
 
-`Authorize` will throw an exception if something goes wrong.
+`Authorize` will throw an exception if something goes wrong, although see the notes about error handling below. `Authorize` may also redirect the client to the Raven web pages in which case it will just return. You should not assume that authentication was successful if `Authorize` returns. If in doubt, you can use the `LoadIdentity` method of the `RavenAuth` class to check whether the client is authenticated, but normally this should not be necessary. 
 
 ### Customisation 
 
