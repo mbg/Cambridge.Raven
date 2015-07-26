@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Cambridge.Raven
 {
@@ -61,7 +62,7 @@ namespace Cambridge.Raven
                     sb.Append("?");
                 }
 
-                sb.AppendFormat("{0}={1}", param.Key, param.Value);
+                sb.AppendFormat("{0}={1}", param.Key, HttpUtility.UrlEncode(param.Value));
             }
 
             return sb.ToString();

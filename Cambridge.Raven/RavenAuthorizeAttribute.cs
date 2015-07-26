@@ -10,6 +10,9 @@ using System.Web;
 
 namespace Cambridge.Raven
 {
+    /// <summary>
+    /// Restricts access to users who have an active Raven session.
+    /// </summary>
     public class RavenAuthorizeAttribute : AuthorizeAttribute
     {
         private RavenAuth auth;
