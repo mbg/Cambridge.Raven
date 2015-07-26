@@ -3,7 +3,7 @@ ASP.NET MVC Authentication Filter for Raven.
 
 ## Setup
 
-Put the [https://raven.cam.ac.uk/project/keys/](public keys used by Raven) in your `App_Data` folder. You can also put them elsewhere if you modify `Web.config` to add the following key to the `appSettings` section:
+Put the [public keys used by Raven](https://raven.cam.ac.uk/project/keys/) in your `App_Data` folder. You can also put them elsewhere if you modify `Web.config` to add the following key to the `appSettings` section:
 
 ```xml
 <appSettings>
